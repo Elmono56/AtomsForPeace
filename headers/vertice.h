@@ -23,7 +23,7 @@ class Vertice{
         aristas = vector<Vertice*>();
         dato = pDato;
         visitado = false;
-
+        peso = 0;
     }
 
 

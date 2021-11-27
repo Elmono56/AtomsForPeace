@@ -15,7 +15,7 @@ class Atom{
     public:
 
         Atom(){
-            name = "";
+            name = "1";
         }
 
         Atom(string pName){
