@@ -14,6 +14,10 @@ class Atom{
 
     public:
 
+        Atom(){
+            name = "";
+        }
+
         Atom(string pName){
             name = pName;
         }

@@ -1,8 +1,10 @@
 
 #include <iostream>
 #include <string>
-#include "atoms.h"
-#include "simulacion.h"
+#include "headers/atoms.h"
+#include "headers/simulacion.h"
+#include "headers/vertice.h"
+#include "headers/grafo.h"
 
 using namespace std;
 
