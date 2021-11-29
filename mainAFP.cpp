@@ -1,10 +1,12 @@
 
 #include <iostream>
 #include <string>
+#include "headers/arco.h"
 #include "headers/atoms.h"
-#include "headers/simulacion.h"
-#include "headers/vertice.h"
 #include "headers/grafo.h"
+#include "headers/nodografo.h"
+#include "headers/simulacion.h"
+#include "headers/gfJSON.h"
 
 using namespace std;
 
@@ -22,71 +24,31 @@ int main(){
     */
 
 
-    Grafo g = Grafo();
+    Grafo g = Grafo(true);
     
-    Atom b0 = Atom();
-    Atom b1 = Atom();
-    Atom c2 = Atom();
-    Atom d3 = Atom();
-    Atom e4 = Atom();
-    Atom f5 = Atom();
-    Atom g6 = Atom();
-    Atom h7 = Atom();
+    Atom a0 = Atom("0");
+    Atom a1 = Atom("1");
+    Atom a2 = Atom("2");
+    Atom a3 = Atom("3");
+    Atom a4 = Atom("4");
 
-    Atom* a0 = &b0;
-    Atom* a1 = &b1;
-    Atom* a2 = &c2;
-    Atom* a3 = &d3;
-    Atom* a4 = &e4;
-    Atom* a5 = &f5;
-    Atom* a6 = &g6;
-    Atom* a7 = &h7;
+    g.addNode(&a0);
+    g.addNode(&a1);
+    g.addNode(&a2);
+    g.addNode(&a3);
+    g.addNode(&a4);
 
+    g.addArc(&a1,&a0,170);
+    g.addArc(&a1,&a2,245);
+    g.addArc(&a1,&a3,90);
+    g.addArc(&a2,&a0,115);
+    g.addArc(&a0,&a3,230);
+    g.addArc(&a3,&a1,88);
+    g.addArc(&a3,&a4,60);
+    g.addArc(&a4,&a1,115);
 
-
-
-    g.agregarVertice(a0);
-    g.agregarVertice(a1);
-    g.agregarVertice(a2);
-    g.agregarVertice(a3);
-    g.agregarVertice(a4);
-    g.agregarVertice(a5);
-    g.agregarVertice(a6);
-    g.agregarVertice(a7);
-    
-    g.agregarArista(g.buscarVertice(a0), g.buscarVertice(a2));
-    g.agregarArista(g.buscarVertice(a2), g.buscarVertice(a0));
-    g.agregarArista(g.buscarVertice(a0), g.buscarVertice(a7));
-    g.agregarArista(g.buscarVertice(a7), g.buscarVertice(a0));
-    g.agregarArista(g.buscarVertice(a0), g.buscarVertice(a5));
-    g.agregarArista(g.buscarVertice(a5), g.buscarVertice(a0));
-    g.agregarArista(g.buscarVertice(a1), g.buscarVertice(a7));
-    g.agregarArista(g.buscarVertice(a7), g.buscarVertice(a1));
-    g.agregarArista(g.buscarVertice(a2), g.buscarVertice(a6));
-    g.agregarArista(g.buscarVertice(a6), g.buscarVertice(a2));
-    g.agregarArista(g.buscarVertice(a3), g.buscarVertice(a4));
-    g.agregarArista(g.buscarVertice(a4), g.buscarVertice(a3));
-    g.agregarArista(g.buscarVertice(a3), g.buscarVertice(a5));
-    g.agregarArista(g.buscarVertice(a5), g.buscarVertice(a3));
-    g.agregarArista(g.buscarVertice(a4), g.buscarVertice(a7));
-    g.agregarArista(g.buscarVertice(a7), g.buscarVertice(a4));
-    g.agregarArista(g.buscarVertice(a4), g.buscarVertice(a6));
-    g.agregarArista(g.buscarVertice(a6), g.buscarVertice(a4));
-    g.agregarArista(g.buscarVertice(a4), g.buscarVertice(a5));
-    g.agregarArista(g.buscarVertice(a5), g.buscarVertice(a4));
-
-    
-    cout<<"LLEGA HASTA AQUI"<<endl;
-    //g.impriimir();
-
-    g.profundidad();
-    
-    cout<<"HIZO PROFUNDIDAD"<<endl;
-
-    g.anchura(g.getVertices()->at(0));
-
-
-
+    g.printMatriz();
 
     return 0;
+
 }

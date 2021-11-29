@@ -11,15 +11,13 @@ class Atom{
     private:
     
         string name;
+        int id;
 
     public:
 
-        Atom(){
-            name = "1";
-        }
-
         Atom(string pName){
             name = pName;
+            id = rand()&99999999;
         }
 
         string getName(){
@@ -28,6 +26,14 @@ class Atom{
         
         void setName(string pName){
             name = pName;
+        }
+
+        int getId() {
+            return id;
+        }
+
+        void setId(int pId) {
+            this->id = pId;
         }
 
 

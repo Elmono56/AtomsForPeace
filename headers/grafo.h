@@ -1,233 +1,189 @@
 #ifndef _GRAFO_
-#define _GRAFO_ 0
+#define _GRAFO_ 1
 
 #include <iostream>
-#include <string>
 #include <vector>
+#include <map>
+#include <queue>
+#include <stack>
+
 #include "atoms.h"
-#include "vertice.h"
+#include "arco.h"
+#include "nodografo.h"
 
 using namespace std;
 
-class Grafo{
-
+class Grafo {
     private:
+        vector<NodoGrafo*> listaNodos;
+        bool esDirigido = true;
+        std::map<int,NodoGrafo*> hashNodos;
 
-        vector<Vertice*> vertices;
+        vector<vector<int>> matrizGrafo = vector<vector<int>>();
+
+        void resetNodes() {
+            for (std::vector<NodoGrafo*>::iterator current = listaNodos.begin() ; current != listaNodos.end(); ++current) {
+                NodoGrafo* actual = (*current);
+                actual->setProcesado(false);
+                actual->setVisitado(false);
+            }
+        }
+
+        NodoGrafo* findNotVisited() {
+            NodoGrafo* result = nullptr;
+            for (std::vector<NodoGrafo*>::iterator current = listaNodos.begin() ; current != listaNodos.end(); ++current) {
+                NodoGrafo* actual = (*current);
+                if (!actual->getVisitado()) {
+                    result = actual;
+                    break;
+                }
+            }
+            return result;
+        }
 
     public:
-
-        Grafo(){
-            vertices = vector<Vertice*>();
+        Grafo(bool pDirigido) {
+            this->esDirigido =  pDirigido;
         }
 
-        
-        Vertice* buscarVertice(Vertice* pVert){
+        int getSize() {
+            return this->listaNodos.size();
+        }
 
-            for (int i = 0; i<vertices.size(); i++){
+        void addNode(Atom* pNodo) {
+            NodoGrafo* nuevoNodo = new NodoGrafo(pNodo);
+            agrandarMatriz();
+            this->listaNodos.push_back(nuevoNodo);
+            hashNodos.insert(pair<int,NodoGrafo*>(pNodo->getId(),nuevoNodo));
+        }
 
-                if (pVert->getDato()==vertices.at(i)->getDato()){
-                    return vertices.at(i);
+        void agrandarMatriz(){
+            vector<int> auxiliar = vector<int>();
+
+            for(int i = 0; i<matrizGrafo.size()+1;i++){
+                auxiliar.push_back(0);
+            }
+
+            matrizGrafo.push_back(auxiliar);
+
+        }
+
+        void addArc(NodoGrafo* pOrigen, NodoGrafo* pDestino) {
+            this->addArc(pOrigen, pDestino, 0);
+        }
+
+        void addArc(NodoGrafo* pOrigen, NodoGrafo* pDestino, int pPeso) {
+            Arco* newArc = new Arco(pOrigen, pDestino, pPeso);
+            int index1;
+            for (int i = 0; i<listaNodos.size(); i++){
+                if (pOrigen == listaNodos.at(i)){
+                    index1 = i;
+                    break;
                 }
             }
-        
-        return nullptr;
-        }
 
-        Vertice* buscarVertice(Atom* pData){
-
-            for (int i = 0; i<vertices.size(); i++){
-
-                if (pData==vertices.at(i)->getDato()){
-                    return vertices.at(i);
+            int index2;
+            for (int i = 0; i<listaNodos.size(); i++){
+                if (pDestino == listaNodos.at(i)){
+                    index2 = i;
+                    break;
                 }
             }
+
+            pOrigen->addArc(newArc);
+            add_edge(index1,index2,pPeso);
+            if (!this->esDirigido) {
+                Arco* reverseArc = new Arco(pDestino, pOrigen , pPeso);
+                pDestino->addArc(reverseArc);
+                add_edge(index2,index1,pPeso);
+            }
+        }
         
-        return nullptr;
+        void addArc(Atom* pOrigen, Atom* pDestino) {
+            this->addArc(pOrigen->getId(), pDestino->getId(), 0);
         }
 
-        void agregarVertice(Atom* pData){
-            
-            Vertice nuevo = Vertice(pData);
-
-            vertices.push_back(&nuevo);
+        void addArc(Atom* pOrigen, Atom* pDestino, int pPeso) {
+            this->addArc(pOrigen->getId(), pDestino->getId(), pPeso);
+        }
+        
+        void addArc(int pOrigen, int pDestino) {
+            this->addArc(pOrigen, pDestino, 0);
         }
 
-        void agregarArista(Vertice* pOrigen, Vertice* pDestino){
-            
-            if(pOrigen!=nullptr && pDestino!=nullptr){
-                pOrigen->agregarAristas(pDestino);
+        void addArc(int pOrigen, int pDestino, int pPeso) {
+            this->addArc(this->getNodo(pOrigen), this->getNodo(pDestino), pPeso);
+        }
+
+        NodoGrafo* getNodo(int pId) { 
+            return hashNodos.at(pId);
+        }
+        
+        void dijkstra(int pOrigen){//número de como se metió al grafo
+
+            vector<int> dist;
+            vector<bool> sptSet;
+        
+            for (int i = 0; i < matrizGrafo.size(); i++){
+                dist[i] = INT_MAX;
+                sptSet[i] = false;
             }
-        }
 
-        void agregarArista(Vertice* pOrigen, Vertice* pDestino, int pPeso){
-            
-            if(pOrigen!=nullptr && pDestino!=nullptr){
-                pOrigen->agregarAristas(pDestino, pPeso);
-            }
-        }
+            dist[pOrigen] = 0;
+        
+            for (int count = 0; count < matrizGrafo.size() - 1; count++) {
+                int u = minDistance(dist, sptSet);
+        
+                sptSet[u] = true;
+        
+                for (int i = 0; i < matrizGrafo.size(); i++){
 
-        void eliminarVertice(Vertice* pVert){
-            
-            int aux;
-
-            for (int i = 0; i < vertices.size(); i++){
-
-                for (int j = 0; j <vertices.size(); j++){
-
-                    if(vertices.at(i)->getAristas()->at(j)->getDato() == pVert->getDato()){
-                        vertices.at(i)->getAristas()->erase(vertices.at(i)->getAristas()->begin()+j);
+                    if (!sptSet[i] && matrizGrafo[u][i] && dist[u] != INT_MAX && dist[u] + matrizGrafo[u][i] < dist[i]){
+                        dist[i] = dist[u] + matrizGrafo[u][i];
                     }
 
                 }
-
-                if (pVert == vertices.at(i)){
-                    aux = i;
-                }
-                
+                    
             }
-
-            vertices.at(aux)->getAristas()->erase(vertices.begin()+aux);
-
-
-        }
-
-        void visitarVertice(Vertice* pNodo){
-
-            for (int i = 0; i<vertices.size();i++){
-
-                if (pNodo->getDato() == vertices.at(i)->getDato()){
-                    vertices.at(i)->setVisitado(true);
-                }
-
-            }
-
-
-        }
-
-        bool verticeVisitado(Vertice* pNodo){
             
-            for (int i = 0; i<vertices.size(); i++){
-
-                if (pNodo->getDato()==vertices.at(i)->getDato()){
-                    return vertices.at(i)->getVisitado();
+        }
+        int minDistance(vector<int> dist, vector<bool> sptSet){
+        
+            //inciarlizar valor mínimo
+            int min = INT_MAX, min_index;
+        
+            for (int i = 0; i < dist.size(); i++){
+                if (sptSet[i] == false && dist[i] <= min){
+                    min = dist[i], min_index = i;
                 }
-
+                    
             }
-            return false;
+        
+            return min_index;
             
         }
 
-        void visitarAdyacentes(Vertice* pOrigen){
+
+        void printMatriz(){
             
-            visitarVertice(pOrigen);
-            cout<<pOrigen->getDato()->getName()<<"    ";
+            for (int i = 0; i<matrizGrafo.size(); i++){
 
-            //para cada arista
-            for (int i = 0; i<pOrigen->getAristas()->size(); i++){
+                for (int j = 0; j<matrizGrafo.size(); j++){
 
-                //marcar adyacentes
-                if(!verticeVisitado(pOrigen->getAristas()->at(i))){
-                    visitarVertice(buscarVertice(pOrigen->getAristas()->at(i)));
+                   cout<<matrizGrafo[i][j]<<"\t";
+                    
                 }
+                cout<<endl;
 
             }
-            cout<<endl;
-
-        }
-
-        void profundidad(){
-            
-            for (int i = 0; i < vertices.size(); i++){
-
-                cout<<vertices.at(i)->getDato()->getName()<<endl;
-
-                if(!vertices.at(i)->getVisitado()){
-                    visitarAdyacentes(vertices.at(i));
-                    cout<<vertices.at(i)->getDato()->getName()<<"   ";
-                }
-                cout<<i<<endl;
-
-            }
-            cout<<endl;
-            cout<<"sale"<<endl;
-            limpiarVisitados();
-
         }
         
-        void limpiarVisitados(){
-            
-            cout<<"LIMPIA"<<endl;
-
-            for (int i = 0; i<vertices.size();i++){
-
-                vertices.at(i)->setVisitado(false);
-
-            }
-
-        }
-
-        void anchura(Vertice* pVert){
-
-            visitarVertice(pVert);
-            cout<<pVert->getDato()->getName()<<"    ";
-
-            vector<Vertice*> cola = vector<Vertice*>();
-
-            //meter a la cola los adyacentes del nodo inicial
-            for (int i = 0; i < pVert->getAristas()->size(); i++) {
-                cola.push_back(buscarVertice(pVert->getAristas()->at(i)));// es para buscar el nodo en vertices
-                visitarVertice(pVert->getAristas()->at(i));
-              
-            }
-
-            while (!cola.empty()){
-
-                //primer elemento de la cola
-                Vertice* actual = cola.at(0);
-                cola.erase(cola.begin());
-                cout<<actual->getDato()->getName()<<"    ";
-
-                //cada arista del vertice en la cola
-                for (int i = 0; i<actual->getAristas()->size();i++){
-
-                    //si no se ha visitado se mete a la cola del adyacente
-                    if (verticeVisitado(actual->getAristas()->at(i))==false){
-
-                        visitarVertice(buscarVertice(actual->getAristas()->at(i)));
-
-                        cola.push_back(actual->getAristas()->at(i));
-                    }
-
-                }
-
-            }
-
-            limpiarVisitados();
-
-        }
-
-        /*
-        void imprimir (){
-            for (int i = 0; i < vertices.size(); i++){
-                cout<<"Vertice " << vertices.at(i)->getDato()->getName()+":  ");
-                for (int j = 0; j < vertices.at(i)->aristas.size(); j++){
-                    System.out.print(vertices.get(i).aristas.get(j).dato +"  ");
-                }
-                System.out.println("");
-            }
-        }*/
-
-
-
-        vector<Vertice*>* getVertices(){
-            return &vertices;
+        void add_edge(int pOrigen, int pDestino, int pPeso) {
+            matrizGrafo.at(pOrigen).push_back(pPeso);
         }
 
 
+        
 };
-
-
-
 
 #endif
