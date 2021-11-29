@@ -159,9 +159,7 @@ class Grafo {
         void dijkstra(int pOrigen){//número de como se metió al grafo
 
             vector<int> dist = vector<int>();
-            vector<bool> sptSet;
-
-            cout<<matrizGrafo.size()<<endl;
+            vector<bool> sptSet = vector<bool>();
         
             for (int i = 0; i < listaNodos.size(); i++){
                 dist.push_back(INT_MAX);
@@ -186,6 +184,11 @@ class Grafo {
             }
 
             int accion = accionAtom(pOrigen, dist);
+
+            //for (int i = 0; i<dist.size(); i++){
+                //cout<<dist.at(i)<<" ";
+            //}
+            //cout<<endl;
             
         }
 

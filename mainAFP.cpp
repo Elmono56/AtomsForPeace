@@ -21,7 +21,7 @@ int main(){
     cin>>cant;
 
     initSimulation(cant);
-    */
+    
 
 
     Grafo g = Grafo(true);
@@ -46,7 +46,14 @@ int main(){
     g.addArc(&a3,&a1,88);
     g.addArc(&a3,&a4,60);
     g.addArc(&a4,&a1,115);
+    */
 
+
+    Grafo* universo = enlazarAtomos();
+
+    cout<<universo->getSize()<<endl;
+
+    universo->printMatriz();
     //g.printMatriz();
 
     //g.dijkstra(1);

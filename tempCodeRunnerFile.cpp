@@ -1,0 +1,1 @@
+cout<<universo->getSize()<<endl;

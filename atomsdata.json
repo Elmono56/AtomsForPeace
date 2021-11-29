@@ -1,6 +1,5 @@
 {
-    "CANT": [10,15,7],
-    "TYPE": ["Galea","Inti","Katmeo"]
+    "Universo": [["Galea","Galea","Galea","Galea","Galea","Galea"],
+    ["Inti","Inti","Inti","Inti","Inti","Inti"],["Katmeo","Katmeo","Katmeo","Katmeo","Katmeo","Katmeo"]]
+
 }
-
-
