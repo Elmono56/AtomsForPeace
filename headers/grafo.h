@@ -18,7 +18,6 @@ class Grafo {
         vector<NodoGrafo*> listaNodos;
         bool esDirigido = true;
         std::map<int,NodoGrafo*> hashNodos;
-
         vector<vector<int>> matrizGrafo = vector<vector<int>>();
 
         void resetNodes() {
@@ -60,7 +59,11 @@ class Grafo {
         void agrandarMatriz(){
             vector<int> auxiliar = vector<int>();
 
-            for(int i = 0; i<matrizGrafo.size()+1;i++){
+            for(int i = 0; i <listaNodos.size();i++){
+                matrizGrafo.at(i).push_back(0);
+            }
+
+            for(int i = 0; i<listaNodos.size()+1;i++){
                 auxiliar.push_back(0);
             }
 
@@ -68,8 +71,22 @@ class Grafo {
 
         }
 
-        void addArc(NodoGrafo* pOrigen, NodoGrafo* pDestino) {
-            this->addArc(pOrigen, pDestino, 0);
+        void printMatriz(){
+            
+            for (int i = 0; i<matrizGrafo.size(); i++){
+
+                for (int j = 0; j<matrizGrafo.size(); j++){
+
+                   cout<<matrizGrafo[i][j]<<"\t";
+                    
+                }
+                cout<<endl;
+
+            }
+        }
+
+        void add_edge(int pOrigen, int pDestino, int pPeso) {
+            matrizGrafo.at(pOrigen).at(pDestino) = pPeso;
         }
 
         void addArc(NodoGrafo* pOrigen, NodoGrafo* pDestino, int pPeso) {
@@ -98,6 +115,10 @@ class Grafo {
                 add_edge(index2,index1,pPeso);
             }
         }
+
+        void addArc(NodoGrafo* pOrigen, NodoGrafo* pDestino) {
+            this->addArc(pOrigen, pDestino, 0);
+        }
         
         void addArc(Atom* pOrigen, Atom* pDestino) {
             this->addArc(pOrigen->getId(), pDestino->getId(), 0);
@@ -118,35 +139,7 @@ class Grafo {
         NodoGrafo* getNodo(int pId) { 
             return hashNodos.at(pId);
         }
-        
-        void dijkstra(int pOrigen){//número de como se metió al grafo
 
-            vector<int> dist;
-            vector<bool> sptSet;
-        
-            for (int i = 0; i < matrizGrafo.size(); i++){
-                dist[i] = INT_MAX;
-                sptSet[i] = false;
-            }
-
-            dist[pOrigen] = 0;
-        
-            for (int count = 0; count < matrizGrafo.size() - 1; count++) {
-                int u = minDistance(dist, sptSet);
-        
-                sptSet[u] = true;
-        
-                for (int i = 0; i < matrizGrafo.size(); i++){
-
-                    if (!sptSet[i] && matrizGrafo[u][i] && dist[u] != INT_MAX && dist[u] + matrizGrafo[u][i] < dist[i]){
-                        dist[i] = dist[u] + matrizGrafo[u][i];
-                    }
-
-                }
-                    
-            }
-            
-        }
         int minDistance(vector<int> dist, vector<bool> sptSet){
         
             //inciarlizar valor mínimo
@@ -162,25 +155,46 @@ class Grafo {
             return min_index;
             
         }
-
-
-        void printMatriz(){
-            
-            for (int i = 0; i<matrizGrafo.size(); i++){
-
-                for (int j = 0; j<matrizGrafo.size(); j++){
-
-                   cout<<matrizGrafo[i][j]<<"\t";
-                    
-                }
-                cout<<endl;
-
-            }
-        }
         
-        void add_edge(int pOrigen, int pDestino, int pPeso) {
-            matrizGrafo.at(pOrigen).push_back(pPeso);
+        void dijkstra(int pOrigen){//número de como se metió al grafo
+
+            vector<int> dist = vector<int>();
+            vector<bool> sptSet;
+
+            cout<<matrizGrafo.size()<<endl;
+        
+            for (int i = 0; i < listaNodos.size(); i++){
+                dist.push_back(INT_MAX);
+                sptSet.push_back(false);
+            }
+
+            dist.at(pOrigen) = 0;
+        
+            for (int count = 0; count < matrizGrafo.size() - 1; count++) {
+                int u = minDistance(dist, sptSet);
+        
+                sptSet.at(u) = true;
+        
+                for (int i = 0; i < matrizGrafo.size(); i++){
+
+                    if (!sptSet.at(i) && matrizGrafo.at(u).at(i) && dist.at(u) != INT_MAX && dist.at(u) + matrizGrafo.at(u).at(i) < dist.at(i)){
+                        dist.at(i) = dist.at(u) + matrizGrafo.at(u).at(i);
+                    }
+
+                }
+                    
+            }
+
+            int accion = accionAtom(pOrigen, dist);
+            
         }
+
+        int accionAtom(int pOrigen, vector<int> pCaminos){
+
+            return 0;
+
+        }
+    
 
 
         

@@ -47,7 +47,9 @@ int main(){
     g.addArc(&a3,&a4,60);
     g.addArc(&a4,&a1,115);
 
-    g.printMatriz();
+    //g.printMatriz();
+
+    //g.dijkstra(1);
 
     return 0;
 
